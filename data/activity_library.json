@@ -1,0 +1,27 @@
+[
+    {
+        "id": "ACT001",
+        "name": "Brock String",
+        "category": "Vision Therapy",
+        "goal": "Improve eye teaming and convergence",
+        "sessions": [
+            "Morning",
+            "Afternoon",
+            "Evening"
+        ],
+        "estimated_minutes": 10,
+        "active": true
+    },
+    {
+        "id": "ACT002",
+        "name": "Hydration",
+        "category": "Daily Living",
+        "sessions": [
+            "Morning",
+            "Afternoon",
+            "Evening"
+        ],
+        "estimated_minutes": 1,
+        "active": true
+    }
+]
