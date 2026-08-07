@@ -1,7 +1,17 @@
 import streamlit as st
 import json
 
-from pages import home
+from components.banner import show as show_banner
+from components.card import show as card
+from components.page_header import show as page_header
+from components.sidebar import show as show_sidebar
+
+from services.client_service import get_preferred_name
+
+from page_views import home
+from page_views import get_to_know
+
+from styles.css import load_css
 
 # ----------------------------------------------------
 # Page Configuration
@@ -9,9 +19,11 @@ from pages import home
 
 st.set_page_config(
     page_title="Levi Recovery Intelligence System",
-    page_icon="🧠",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+
+load_css()
 
 # ----------------------------------------------------
 # Session State
@@ -24,123 +36,109 @@ if "selected_category" not in st.session_state:
     st.session_state.selected_category = None
 
 # ----------------------------------------------------
-# Header
+# Global Banner
 # ----------------------------------------------------
 
-st.title("🧠 Levi Recovery Intelligence System")
+client_name = get_preferred_name()
+
+show_banner()
 
 # ----------------------------------------------------
-# Sidebar
+# Sidebar Navigation
 # ----------------------------------------------------
 
-st.sidebar.title("Navigation")
-
-page = st.sidebar.radio(
-    "Go to",
-    [
-        "🏠 Home",
-        "📚 Therapy Library",
-        "📝 Daily Log",
-        "👥 Caregiver"
-    ]
-)
+page = show_sidebar(client_name)
 
 # ====================================================
 # HOME
 # ====================================================
 
-if page == "🏠 Home":
+if page == "Home":
 
-    # Display the Home page header from pages/home.py
-    home.show()
+    home.show(client_name)
 
-    # ------------------------------------------------
-    # The remaining sections will be moved into modules
-    # one at a time.
-    # ------------------------------------------------
+# ====================================================
+# GET TO KNOW LEVI
+# ====================================================
 
-    left_column, right_column = st.columns([2, 1])
+elif page == f"Get to Know {client_name}":
 
-    with left_column:
-
-        with open("data/activity_library.json", "r") as file:
-            activities = json.load(file)
-
-        st.subheader("Today's Tasks")
-
-        for activity in activities:
-            st.checkbox(
-                activity["name"],
-                key=activity["id"]
-            )
-
-    with right_column:
-
-        st.subheader("Today's Notes")
-        st.info("No notes for today.")
-
-        st.subheader("Today's Appointment")
-        st.success("No appointments scheduled.")
-
-    st.write("🚧 Version 1 is currently under development.")
+    get_to_know.show()
 
 # ====================================================
 # THERAPY LIBRARY
 # ====================================================
 
-if page == "📚 Therapy Library":
+elif page == "Therapy Library":
 
-    st.title("📚 Therapy Library")
+    page_header(
+        "Therapy Library",
+        "Browse therapies and treatment resources."
+    )
 
     if st.session_state.selected_category == "Vision Therapy":
 
-        if st.button("⬅ Back to Therapy Library"):
+        if st.button("Back to Therapy Library"):
             st.session_state.selected_category = None
             st.rerun()
 
-        st.header("👁️ Vision Therapy")
+        card("Vision Therapy")
 
-        if st.button("👁️ Brock String"):
-            with open("therapies/vision/brock_string/brock_string.md", "r") as file:
+        if st.button("Brock String"):
+
+            with open(
+                "therapies/vision/brock_string/brock_string.md",
+                "r",
+                encoding="utf-8"
+            ) as file:
+
                 st.markdown(file.read())
 
     else:
 
         st.write("Select a therapy category:")
 
-        if st.button("👁️ Vision Therapy"):
+        if st.button("Vision Therapy"):
             st.session_state.selected_category = "Vision Therapy"
             st.rerun()
 
-        if st.button("⚖️ Balance & Mobility"):
-            st.success("Coming Soon")
+        if st.button("Balance & Mobility"):
+            st.info("Coming Soon")
 
-        if st.button("👂 Vestibular Therapy"):
-            st.success("Coming Soon")
+        if st.button("Vestibular Therapy"):
+            st.info("Coming Soon")
 
-        if st.button("🗣️ Speech & Communication"):
-            st.success("Coming Soon")
+        if st.button("Speech & Communication"):
+            st.info("Coming Soon")
 
-        if st.button("🏡 Daily Living Skills"):
-            st.success("Coming Soon")
+        if st.button("Daily Living Skills"):
+            st.info("Coming Soon")
 
-        if st.button("❤️ Wellness"):
-            st.success("Coming Soon")
+        if st.button("Wellness"):
+            st.info("Coming Soon")
 
 # ====================================================
 # DAILY LOG
 # ====================================================
 
-if page == "📝 Daily Log":
+elif page == "Daily Log":
 
-    st.title("📝 Daily Log")
+    page_header(
+        "Daily Log",
+        "Record daily observations, activities, and progress."
+    )
+
     st.info("Daily Log coming soon.")
 
 # ====================================================
 # CAREGIVER
 # ====================================================
 
-if page == "👥 Caregiver":
+elif page == "Caregiver":
 
-    st.title("👥 Caregiver")
+    page_header(
+        "Caregiver",
+        "Resources and tools for the care team."
+    )
+
     st.info("Caregiver tools coming soon.")
